@@ -1,0 +1,19 @@
+{
+    "author": "DmmD",
+    "channels": [
+        [
+            1000, 4000
+        ],
+        [
+            1500, 3500, 4500
+        ],
+        [
+            2000, 3000, 5000
+        ],
+        [
+            2500, 5500
+        ]
+    ],
+    "description": "This is a test song",
+    "name": "Test"
+}

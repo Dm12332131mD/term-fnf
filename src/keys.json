@@ -1,0 +1,44 @@
+{
+    "DOWN": {
+        "ctrl": null,
+        "shift": null,
+        "meta": null,
+        "name": "down"
+    },
+    "ESCAPE": {
+        "ctrl": null,
+        "shift": null,
+        "meta": null,
+        "name": "escape"
+    },
+    "EXIT": {
+        "ctrl": true,
+        "shift": false,
+        "meta": false,
+        "name": "c"
+    },
+    "LEFT": {
+        "ctrl": null,
+        "shift": null,
+        "meta": null,
+        "name": "left"
+    },
+    "RIGHT": {
+        "ctrl": null,
+        "shift": null,
+        "meta": null,
+        "name": "right"
+    },
+    "SPACE": {
+        "ctrl": null,
+        "shift": null,
+        "meta": null,
+        "name": "space"
+    },
+    "UP": {
+        "ctrl": null,
+        "shift": null,
+        "meta": null,
+        "name": "up"
+    }
+}

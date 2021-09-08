@@ -1,0 +1,24 @@
+{
+    "arrows": {
+        "UP": {
+            "active": "#00FF00",
+            "arrow": "#00AA00",
+            "inactive": "#007700"
+        },
+        "RIGHT": {
+            "active": "#FF0000",
+            "arrow": "#AA0000",
+            "inactive": "#770000"
+        },
+        "DOWN": {
+            "active": "#00FFFF",
+            "arrow": "#00AAAA",
+            "inactive": "#007777"
+        },
+        "LEFT": {
+            "active": "#FF77FF",
+            "arrow": "#AA55AA",
+            "inactive": "#773377"
+        }
+    }
+}
