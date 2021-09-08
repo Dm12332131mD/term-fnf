@@ -1,8 +1,10 @@
+"use strict";
+
 // Imports
 const dpaint = require("@dmmdjs/dmmd.js/dpaint/exports.js");
 const fs = require("fs");
 const net = require("net");
-const Package = require("./src/Package.js");
+const Packet = require("./src/Packet.js");
 
 // Variables
 let serverLog = fs.createWriteStream("serverLog.txt");
@@ -12,15 +14,28 @@ let [ node, path, host, port, ...argv ] = process.argv, server = null, connectio
 if(net.isIP(host) && !isNaN(port)) {
     server = net.createServer(connection => {
         log("connect", connection);
+        if(!connections.length) connection.isServerHost = true;
         connections.push(connection);
-        connection.on("data", data => broadcast(connection, data.toString()));
+        connection.on("data", data => {
+            let packet = Packet.unpack(data.toString());
+            if(packet.status === "START" && !connection.isServerHost) {
+                connection.write(Packet.pack({
+                    message: "Connection is not a server host",
+                    status: "ERROR"
+                }));
+                log("error", "Broadcast unsuccessful: connection is not a server host");
+            }
+            else broadcast(connection, data.toString());
+        });
         connection.on("error", error => {
-            log("error", error);
+            log("error", error.message);
+            if(connection.isServerHost) log("close", "Server host disconnected");
             connection.end();
             connections.splice(connections.findIndex(c => c === connection), 1);
         });
         connection.on("end", () => {
             log("disconnect", connection);
+            if(connection.isServerHost) log("close", "Server host disconnected");
             connections.splice(connections.findIndex(c => c === connection), 1);
             console.log(connections)
         });
@@ -42,6 +57,15 @@ function broadcast(connection, data) {
 function log(type, ...data) {
     let date = new Date().toLocaleString();
     switch(type) {
+        case "close": {
+            let message = `${date} | ${data.join(" & ")}`;
+            console.log(dpaint.yellow(message));
+            serverLog.end(`${message}\n`, "utf8", () => {
+                server.close();
+                process.exit();
+            });
+            break;
+        };
         case "connect": {
             let message = `${date} | New Connection`;
             console.log(dpaint.yellow(message));
@@ -55,8 +79,8 @@ function log(type, ...data) {
             break;
         };
         case "error": {
-            console.log(dpaint.red(`${date} | An error occurred: ${data[0].message}`));
-            serverLog.write(`${date} | Error: ${data[0].message}\n${data[0]}\n`);
+            console.log(dpaint.red(`${date} | An error occurred: ${data[0]}`));
+            serverLog.write(`${date} | Error: ${data[0]}\n`);
             break;
         };
         case "listen": {

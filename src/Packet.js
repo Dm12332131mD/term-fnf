@@ -1,5 +1,7 @@
+"use strict";
+
 // Class
-class Package extends null {
+class Packet extends null {
     static isJSON(v) {
         try {
             JSON.parse(v);
@@ -16,10 +18,10 @@ class Package extends null {
     };
     
     static unpack(v) {
-        if(!Package.isJSON(v)) throw new TypeError("Argument is not a valid JSON");
+        if(!Packet.isJSON(v)) throw new TypeError("Argument is not a valid JSON");
         return JSON.parse(v);
     };
 };
 
 // Exports
-module.exports = Package;
+module.exports = Packet;

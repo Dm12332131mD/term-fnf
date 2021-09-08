@@ -1,3 +1,5 @@
+"use strict";
+
 // Imports
 const Events = require("events");
 const readline = require("readline");
@@ -6,9 +8,13 @@ const readline = require("readline");
 class Terminal extends Events {
     constructor(stdin, stdout) {
         super();
-        this.chart = null;
+        this.chart = null
+        this.chartTimeout = null;
         this.createdTimestamp = Date.now();
-        this.createdTimestamp = null;
+        this.delays = null;
+        this.length = null;
+        this.playedTimestamp = null;
+        this.score = null;
         this.stdin = stdin;
         this.stdout = stdout;
         if(this.stdin.isTTY) {
@@ -22,7 +28,7 @@ class Terminal extends Events {
     };
 
     clear() {
-        this.write("\n".repeat(this.height));
+        this.write(`${" ".repeat(this.width)}\n`.repeat(this.height));
     };
 
     cursorMove(x, y) {
@@ -34,14 +40,31 @@ class Terminal extends Events {
         return Date.now() - this.playedTimestamp;
     };
 
+    end(force) {
+        if(!this.chart) throw new Error("No chart is currently playing");
+        if(this.chartTimeout) clearTimeout(this.chartTimeout);
+        if(!force) this.emit("chartEnd", this.chart);
+        this.chart = null
+        this.chartTimeout = null;
+        this.delays = null;
+        this.length = null;
+        this.playedTimestamp = null;
+        this.score = null;
+    };
+
     get height() {
         return this.stdout.rows;
     };
 
-    play(chart) {
+    start(chart, force) {
         if(this.chart) throw new Error("A chart is already playing");
         this.chart = JSON.parse(JSON.stringify(chart));
+        this.delays = [];
+        this.length = Math.max(...this.chart.channels.flat());
         this.playedTimestamp = Date.now();
+        this.score = 0;
+        this.chartTimeout = setTimeout(() => this.end(), this.length + 5000);
+        if(!force) this.emit("chartStart", this.chart);
     };
 
     get uptime() {
