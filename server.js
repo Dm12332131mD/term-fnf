@@ -14,8 +14,13 @@ let [ node, path, host, port, ...argv ] = process.argv, server = null, connectio
 if(net.isIP(host) && !isNaN(port)) {
     server = net.createServer(connection => {
         log("connect", connection);
-        if(!connections.length) connection.isServerHost = true;
+        if(connections.length === 0) connection.isServerHost = true;
         connections.push(connection);
+        connection.write(Packet.pack({
+            connectTimestamp: Date.now(),
+            isServerHost: connection.isServerHost,
+            status: "CONNECT"
+        }));
         connection.on("data", data => {
             let packet = Packet.unpack(data.toString());
             if(packet.status === "START" && !connection.isServerHost) {

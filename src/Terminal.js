@@ -40,10 +40,10 @@ class Terminal extends Events {
         return Date.now() - this.playedTimestamp;
     };
 
-    end(force) {
+    end(silent) {
         if(!this.chart) throw new Error("No chart is currently playing");
         if(this.chartTimeout) clearTimeout(this.chartTimeout);
-        if(!force) this.emit("chartEnd", this.chart);
+        this.emit("chartEnd", silent);
         this.chart = null
         this.chartTimeout = null;
         this.delays = null;
@@ -56,7 +56,7 @@ class Terminal extends Events {
         return this.stdout.rows;
     };
 
-    start(chart, force) {
+    start(chart, silent) {
         if(this.chart) throw new Error("A chart is already playing");
         this.chart = JSON.parse(JSON.stringify(chart));
         this.delays = [];
@@ -64,7 +64,7 @@ class Terminal extends Events {
         this.playedTimestamp = Date.now();
         this.score = 0;
         this.chartTimeout = setTimeout(() => this.end(), this.length + 5000);
-        if(!force) this.emit("chartStart", this.chart);
+        this.emit("chartStart", this.chart, silent);
     };
 
     get uptime() {
